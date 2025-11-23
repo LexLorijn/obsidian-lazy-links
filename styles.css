@@ -1,0 +1,22 @@
+/* 1. The 'First' match (Strong visibility) */
+.cm-virtual-link {
+    border-bottom: 1px dashed var(--interactive-accent);
+    cursor: help;
+    color: var(--text-accent); /* Highlights the text color */
+}
+
+/* 2. The 'Subsequent' matches (Low noise) */
+.cm-virtual-link-muted {
+    border-bottom: 1px dashed var(--interactive-accent); /* Keep the line */
+    cursor: help;
+    color: inherit; /* Keep original text color */
+    opacity: 1.0; /* Make it subtle */
+}
+
+/* Hover effects for both */
+.cm-virtual-link:hover, .cm-virtual-link-muted:hover {
+    background-color: var(--interactive-accent-hover);
+    color: var(--text-on-accent);
+    opacity: 1;
+    border-radius: 2px;
+}
