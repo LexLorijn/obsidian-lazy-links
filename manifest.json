@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-virtual-linker",
-	"name": "Virtual Linker",
+	"id": "obsidian-lazy-links",
+	"name": "Lazy Links",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Highlights text matching existing notes or aliases and allows one-click conversion to real Wikilinks.",
-	"author": "Gemini",
-	"authorUrl": "https://github.com/obsidianmd",
+	"author": "LexLorijn",
+	"authorUrl": "https://github.com/LexLorijn",
 	"isDesktopOnly": false
 }
