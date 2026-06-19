@@ -147,7 +147,6 @@ export default class LazyLinksPlugin extends Plugin {
             decorations: DecorationSet;
             plugin: LazyLinksPlugin;
             currentFile: TFile | null = null;
-            touchedRanges: {from: number, to: number, time: number}[] = [];
 
             constructor(view: EditorView) {
                 this.plugin = this.plugin || app.plugins.plugins["obsidian-lazy-links"]; // Fallback if capture fails
@@ -159,12 +158,6 @@ export default class LazyLinksPlugin extends Plugin {
             }
 
             update(update: ViewUpdate) {
-                if (update.docChanged) {
-                    update.changes.iterChanges((fromA, toA, fromB, toB, text) => {
-                        this.touchedRanges.push({ from: fromB, to: toB + text.length, time: Date.now() });
-                    });
-                }
-                
                 if (update.docChanged || update.viewportChanged || update.transactions.some(t => t.isUserEvent('lazy-links-refresh'))) {
                     this.updateCurrentFile(update.view);
                     this.decorations = this.buildDecorations(update.view);
@@ -377,19 +370,14 @@ export default class LazyLinksPlugin extends Plugin {
         
         for (let len = lower.length - 1; len >= this.settings.minMatchLength; len--) {
             for (let i = 0; i <= lower.length - len; i++) {
+                const isStart = i === 0;
+                const isEnd = i + len === lower.length;
+                // Skip positions the enabled modes can't accept *before* allocating — avoids O(L^2) substring churn when matchMiddle is off (the default).
+                if (!((isStart && this.settings.matchStart) || (isEnd && this.settings.matchEnd) || (!isStart && !isEnd && this.settings.matchMiddle))) continue;
                 const sub = lower.substring(i, i + len);
                 if (!allowSelf && selfNames.has(sub)) continue;
-                
                 if (this.singleWordIndex.has(sub)) {
-                    const isStart = i === 0;
-                    const isEnd = i + len === lower.length;
-                    const isMiddle = !isStart && !isEnd;
-                    
-                    if ((isStart && this.settings.matchStart) || 
-                        (isEnd && this.settings.matchEnd) || 
-                        (isMiddle && this.settings.matchMiddle)) {
-                        return { target: this.singleWordIndex.get(sub), matchedString: sub };
-                    }
+                    return { target: this.singleWordIndex.get(sub), matchedString: sub };
                 }
             }
         }
